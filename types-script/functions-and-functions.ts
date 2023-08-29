@@ -1,42 +1,29 @@
-export const printToFile = (text: string, callback: () => void): void => {
-  console.log(text);
-  callback();
-};
+import houses from "./houses";
 
-//First way to work with types
-export const arrayMutate = (
-  numbers: number[],
-  mutate: (v: number) => number
-): number[] => {
-  return numbers.map(mutate);
-};
+interface House {
+  name: string;
+  planets: string | string[];
+}
 
-printToFile("Hi", () => {
-  console.log("array executed");
-});
-console.log(arrayMutate([1, 2, 30, 4, 5], (v) => v * 10));
+interface HouseWithID {
+  planets: string | string[];
+}
 
-//Second way to work with types. Create a function type
-type MutateFunction = (v: number) => number;
-export const arrayMutateArr = (
-  numbers: number[],
-  mutate: MutateFunction
-): number[] => {
-  return numbers.map(mutate);
-};
+function findHouses(
+  input: string | House[],
+  filter: (house: House) => boolean
+): HouseWithID[] {
+  const houses: House[] = typeof input === "string" ? JSON.parse(input) : input;
+  return (filter ? houses.filter(filter) : houses).map((house) => {
+    return {
+      id: houses.indexOf(house),
+      ...house,
+    };
+  });
+}
 
-printToFile("Hi", () => {
-  console.log("array executed");
-});
-console.log(arrayMutateArr([1, 2, 30, 4, 5], (v) => v * 10));
+console.log(
+  findHouses(JSON.stringify(houses), ({ name }) => name === "Atreides")
+);
 
-//create create a new type based on previous Mutation Function type
-const myNewMutateFunc: MutateFunction = (v: number) => v * 100;
-
-type AdderFunction = (val: number) => number;
-
-export const createAdder = (num: number): AdderFunction => {
-  return (val: number) => num + val;
-};
-const add = createAdder(1);
-console.log(add(5));
+// console.log(findHouses(houses, ({ name }) => name === "Harkonnen"));
