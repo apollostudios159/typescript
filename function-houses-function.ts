@@ -6,8 +6,6 @@ interface House {
 }
 
 interface HouseWithID {
-  id: number;
-  name: string;
   planets: string | string[];
 }
 
